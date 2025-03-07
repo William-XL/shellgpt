@@ -242,14 +242,34 @@ def execute_command(cmd, api_key):
 
 def display_response(sections, api_key):
     """以表格形式显示响应内容"""
-    table = Table(show_header=True, header_style="bold magenta", box=None, padding=(0, 2))
-    table.add_column("序号", style="yellow", justify="right")
-    table.add_column("命令", style="cyan")
-    table.add_column("说明", style="green")
+    # 获取终端宽度
+    width = console.width
+    
+    table = Table(
+        show_header=True,
+        header_style="bold magenta",
+        box=None,
+        padding=(0, 2),
+        show_lines=True,  # 显示行分隔符，使得多行内容更清晰
+        wrap=True  # 启用自动换行
+    )
+    table.add_column("序号", style="yellow", justify="right", width=4, no_wrap=True)
+    table.add_column("命令", style="cyan", width=30, no_wrap=False)  # 允许命令换行
+    table.add_column(
+        "说明", 
+        style="green",
+        width=max(40, width - 50),  # 动态计算说明列宽度：终端宽度减去其他列和padding的宽度
+        overflow="fold",
+        no_wrap=False
+    )
     
     # 添加命令和说明
     for i, cmd in enumerate(sections['commands'], 1):
         explanation = sections['explanations'][i-1] if i-1 < len(sections['explanations']) else ""
+        # 移除说明中的序号前缀（如果有）
+        explanation = re.sub(r'^\d+\.\s*`[^`]+`:\s*', '', explanation)
+        # 移除多余的空格和换行
+        explanation = ' '.join(explanation.split())
         table.add_row(f"{i}", f"$ {cmd}", explanation)
     
     console.print(table)
@@ -258,7 +278,7 @@ def display_response(sections, api_key):
     if sections['warnings']:
         console.print("\n[yellow]⚠️ 注意事项：[/yellow]")
         for warning in sections['warnings']:
-            console.print(f"[yellow]• {warning}[/yellow]")
+            console.print(f"[yellow]• {warning}[/yellow]", soft_wrap=True)
     
     # 提供命令执行选项
     if sections['commands']:
