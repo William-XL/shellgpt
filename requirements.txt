@@ -1,0 +1,3 @@
+requests>=2.31.0
+rich>=10.0.0
+pyreadline3>=3.4.1; platform_system=="Windows" 
