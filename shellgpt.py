@@ -250,8 +250,8 @@ def display_response(sections, api_key):
         header_style="bold magenta",
         box=None,
         padding=(0, 2),
-        show_lines=True,  # 显示行分隔符，使得多行内容更清晰
-        wrap=True  # 启用自动换行
+        show_lines=True  # 显示行分隔符，使得多行内容更清晰
+        # 移除不支持的 wrap 参数
     )
     table.add_column("序号", style="yellow", justify="right", width=4, no_wrap=True)
     table.add_column("命令", style="cyan", width=30, no_wrap=False)  # 允许命令换行
@@ -259,7 +259,7 @@ def display_response(sections, api_key):
         "说明", 
         style="green",
         width=max(40, width - 50),  # 动态计算说明列宽度：终端宽度减去其他列和padding的宽度
-        overflow="fold",
+        overflow="fold",  # 已设置 overflow 为 fold 实现自动换行
         no_wrap=False
     )
     
@@ -397,4 +397,4 @@ def main():
     console.print("[green]感谢使用ShellGPT！再见！[/green]")
 
 if __name__ == "__main__":
-    main() 
+    main()
